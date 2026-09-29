@@ -1,0 +1,119 @@
+name: Release
+
+# Builds every app and, on a v* tag, attaches them to a GitHub Release.
+# No secrets are involved: builds are generic — each user configures their
+# own network (Firebase + TURN) inside the apps.
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  agent-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run dist:win -w packages/agent
+      - uses: actions/upload-artifact@v4
+        with:
+          name: agent-windows
+          path: packages/agent/release/*portable*.exe
+
+  agent-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run dist:linux -w packages/agent
+      - uses: actions/upload-artifact@v4
+        with:
+          name: agent-linux
+          path: packages/agent/release/*.AppImage
+
+  client-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run dist:win -w packages/client
+      - uses: actions/upload-artifact@v4
+        with:
+          name: client-windows
+          path: packages/client/release/*.exe
+
+  android:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: [agent, client]
+    defaults:
+      run:
+        working-directory: packages/android-${{ matrix.app }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      # A fresh runner has no debug.keystore, so Gradle would mint a new one
+      # every run — Android then refuses to install an update over the
+      # previous release (signature mismatch) and ANDROID_ID-based device
+      # identity changes. Caching keeps the key identical release to release.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: android-debug-keystore-${{ matrix.app }}-v1
+      - name: Ensure a debug keystore exists
+        run: |
+          mkdir -p ~/.android
+          if [ ! -f ~/.android/debug.keystore ]; then
+            keytool -genkeypair -v -keystore ~/.android/debug.keystore -storepass android \
+              -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 \
+              -dname "CN=Android Debug,O=Android,C=US"
+          fi
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - run: gradle assembleDebug
+      - run: mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/camerascontroller-${{ matrix.app }}.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-${{ matrix.app }}
+          path: packages/android-${{ matrix.app }}/app/build/outputs/apk/debug/camerascontroller-${{ matrix.app }}.apk
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [agent-windows, agent-linux, client-windows, android]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+          body: |
+            Сборки CamerasController. С чего начать — [SETUP.md](https://github.com/${{ github.repository }}/blob/main/SETUP.md).
+
+            | Файл | Что это |
+            |---|---|
+            | `CamerasController-Setup-*.exe` | клиент для Windows (установщик) |
+            | `camerascontroller-client.apk` | клиент для Android |
+            | `CamerasController-Agent-*-portable.exe` | агент-камера для Windows (без установки) |
+            | `CamerasController-Agent-*.AppImage` | агент-камера для Linux |
+            | `camerascontroller-agent.apk` | агент-камера для Android |

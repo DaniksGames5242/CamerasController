@@ -1,0 +1,8 @@
+name = "cc-turn"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+
+# Secrets (never committed — set via `wrangler secret put <NAME>`):
+#   TURN_KEY_ID         — Cloudflare Realtime TURN Key ID
+#   TURN_KEY_API_TOKEN  — Cloudflare Realtime TURN API Token
+#   ALLOWED_NETWORK_ID  — your network id (shown on the "create network" screen); several: comma-separated

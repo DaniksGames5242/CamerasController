@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <title>CamerasController</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!--
+      Layer order, back to front:
+        #stage-gl    the hologram itself — room, slabs, dust, optics
+        #slab-layer  DOM chrome projected onto the 3D slabs
+        #ui          screen-space chrome that must stay crisp and reachable
+      Everything else (cursor, palette, toasts, radial menu) is appended by
+      the app at the end of <body>.
+    -->
+    <canvas id="stage-gl"></canvas>
+    <div id="slab-layer" aria-hidden="false"></div>
+
+    <div id="ui">
+      <aside id="rail">
+        <div class="rail-edge" aria-hidden="true"></div>
+        <header id="brand">
+          <div class="brand-mark" id="brand-mark"></div>
+          <div class="brand-sub">ГОЛОГРАФИЧЕСКИЙ ПУЛЬТ НАБЛЮДЕНИЯ</div>
+          <div class="brand-rule" aria-hidden="true"><i></i></div>
+        </header>
+
+        <div id="rail-hud">
+          <div class="hud-stat">
+            <span class="hud-key">УЗЛЫ</span>
+            <span class="hud-val" id="stat-nodes">0</span>
+          </div>
+          <div class="hud-stat">
+            <span class="hud-key">В СЕТИ</span>
+            <span class="hud-val ok" id="stat-online">0</span>
+          </div>
+          <div class="hud-stat">
+            <span class="hud-key">КАНАЛЫ</span>
+            <span class="hud-val accent" id="stat-channels">0</span>
+          </div>
+        </div>
+
+        <div class="rail-section-title">
+          <span>УЗЛЫ СЕТИ</span>
+          <i class="rail-section-line" aria-hidden="true"></i>
+          <button
+            type="button"
+            class="dedupe-toggle"
+            id="dedupe-toggle"
+            title="Объединять записи с одинаковым именем в одну строку"
+          >ДУБЛИ</button>
+        </div>
+
+        <div id="device-scroll">
+          <div id="device-list"></div>
+          <div id="device-empty">
+            <div class="empty-ring" aria-hidden="true"><i></i><i></i><i></i></div>
+            <p class="empty-title">УЗЛЫ НЕ ОБНАРУЖЕНЫ</p>
+            <p class="empty-sub">запустите агент на камере и введите<br />код из «Пригласить» внизу панели</p>
+          </div>
+        </div>
+
+        <footer id="rail-foot">
+          <button class="ghost-btn" id="btn-invite">
+            <span class="ghost-glyph">＋</span>
+            <span class="ghost-label">ПРИГЛАСИТЬ</span>
+          </button>
+          <button class="ghost-btn" id="btn-palette">
+            <span class="ghost-glyph">⌘</span>
+            <span class="ghost-label">КОМАНДЫ</span>
+            <kbd>Ctrl K</kbd>
+          </button>
+        </footer>
+      </aside>
+
+      <div id="stage-hud">
+        <div id="stage-title">
+          <span class="stage-title-text" id="stage-title-text"></span>
+          <span class="stage-title-caret" aria-hidden="true"></span>
+        </div>
+        <div id="stage-empty">
+          <div class="stage-empty-frame" aria-hidden="true">
+            <i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i>
+          </div>
+          <p class="stage-empty-title">ПРОЕКЦИОННОЕ ПОЛЕ СВОБОДНО</p>
+          <p class="stage-empty-sub">выберите узел слева — каналы открываются один поверх другого</p>
+        </div>
+      </div>
+
+      <div id="dock">
+        <button class="dock-btn" id="dock-scan" data-hint="Прогнать сканирующую плоскость по залу">
+          <span class="dock-glyph">◈</span><span class="dock-label">СКАН</span>
+        </button>
+        <button class="dock-btn" id="dock-layout" data-hint="Переключить раскладку каналов">
+          <span class="dock-glyph">▦</span><span class="dock-label">РАСКЛАДКА</span>
+        </button>
+        <button class="dock-btn" id="dock-recall" data-hint="Вернуть камеру в исходное положение">
+          <span class="dock-glyph">⌾</span><span class="dock-label">КАМЕРА</span>
+        </button>
+        <div class="dock-sep" aria-hidden="true"></div>
+        <div class="dock-meter" id="dock-meter" data-hint="Нагрузка рендера — качество текущего кадра">
+          <i class="dock-meter-fill"></i>
+          <span class="dock-meter-label">GPU</span>
+        </div>
+      </div>
+
+      <div id="hint-bar">
+        <span><kbd>Ctrl</kbd><kbd>K</kbd> команды</span>
+        <span><kbd>1</kbd>…<kbd>9</kbd> фокус на канале</span>
+        <span><kbd>R</kbd> запись</span>
+        <span><kbd>M</kbd> микрофон</span>
+        <span><kbd>Esc</kbd> закрыть</span>
+        <span class="hint-drag">ПКМ по узлу — меню · перетаскивание — облёт зала</span>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

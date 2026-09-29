@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Only for the optional talk-back mic button — requested lazily on
+         first press, not up front. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Haptics.materialise/reject/dragTick call Vibrator.vibrate() directly
+         (not performHapticFeedback, which needs no permission) — without this,
+         every one of those calls throws a SecurityException and crashes. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- Only for scanning an invite QR on the setup screen. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <application
+        android:allowBackup="false"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.MyCamerasControllerClient">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".SetupActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".NetworkActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ViewerActivity"
+            android:exported="false"
+            android:screenOrientation="userLandscape" />
+
+    </application>
+</manifest>

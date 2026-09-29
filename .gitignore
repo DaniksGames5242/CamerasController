@@ -1,0 +1,23 @@
+node_modules/
+dist/
+out/
+release/
+*.log
+.DS_Store
+
+# per-device local config (device name, generated ids)
+config.local.json
+
+# Never needed any more (the network is configured inside the apps), but
+# ignored anyway so a leftover from an older private setup can't slip in.
+firebase.config.json
+google-services.json
+RoomConfig.kt
+.dev.vars
+.wrangler/
+
+# Android build output
+packages/android-*/.gradle/
+packages/android-*/app/build/
+packages/android-*/build/
+packages/android-*/local.properties

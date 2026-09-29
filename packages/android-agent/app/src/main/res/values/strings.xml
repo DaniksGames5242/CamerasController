@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">CamerasController Agent</string>
+    <string name="permissions_title">Камера сети подключена</string>
+    <string name="permissions_description">Сеть «%1$s» · устройство «%2$s».
+Камера и микрофон включаются только пока их смотрят с вашего клиента, и всё это время висит уведомление.</string>
+    <string name="grant_permissions">РАЗРЕШИТЬ КАМЕРУ И МИКРОФОН</string>
+    <string name="ignore_battery_optimizations">ОТКЛЮЧИТЬ ОПТИМИЗАЦИЮ БАТАРЕИ</string>
+    <string name="leave_network">ОТКЛЮЧИТЬСЯ ОТ СЕТИ</string>
+    <string name="leave_network_confirm">Отключить этот телефон от сети? Агент остановится, сохранённый код будет удалён.</string>
+    <string name="notification_channel_name">Статус агента камеры</string>
+    <string name="notification_title_idle">CamerasController: камера в режиме ожидания</string>
+    <string name="notification_title_streaming">CamerasController: камеру сейчас смотрят</string>
+    <string name="setup_brand">CAMERAS//CONTROLLER · АГЕНТ</string>
+    <string name="setup_title">Подключить эту камеру к своей сети</string>
+    <string name="setup_description">Телефон станет камерой вашей сети CamerasController. Камера и микрофон включаются только пока их смотрят с вашего клиента, в это время висит уведомление. Отключиться можно в любой момент в этом приложении.</string>
+    <string name="setup_code_hint">Код приглашения (CC1.…)</string>
+    <string name="setup_scan">СКАНИРОВАТЬ QR</string>
+    <string name="setup_scan_prompt">Наведите камеру на QR-код в клиенте CamerasController</string>
+    <string name="setup_device_name">Имя этого устройства</string>
+    <string name="setup_consent">Это моё устройство (или у меня есть согласие его владельца и людей, которые могут попасть в кадр), и я разрешаю передавать с него видео и звук в мою сеть.</string>
+    <string name="setup_consent_required">Подтвердите, что имеете право подключить это устройство.</string>
+    <string name="setup_connect">ПОДКЛЮЧИТЬ</string>
+    <string name="setup_checking">ПРОВЕРЯЮ…</string>
+</resources>
